@@ -14,6 +14,6 @@ script:
 after_success:
   - coveralls
   - export DEPLOY_CONTENT='{"TRAVIS_BUILD_NUMBER":"'$TRAVIS_BUILD_NUMBER'","TRAVIS_COMMIT":"'$TRAVIS_COMMIT'"}'
-  - export DEPLOY_SIG="sha1=`echo -n $DEPLOY_CONTENT | openssl sha1 -hmac $DEPLOY_KEY`"
+  - export DEPLOY_SIG="sha1=`echo $DEPLOY_CONTENT | openssl sha1 -hmac $DEPLOY_KEY`"
   - >
     curl -X POST "$DEPLOY_URL" --data $DEPLOY_CONTENT -H "Content-Type: application/json" -H "X-Trav-Signature: $DEPLOY_SIG"
