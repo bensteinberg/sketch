@@ -13,8 +13,8 @@ script:
   coverage run --source=sketch sketch_tests.py
 after_success:
   - coveralls
-  - export DEPLOY_CONTENT="{'TRAVIS_BUILD_NUMBER':'"$TRAVIS_BUILD_NUMBER"','TRAVIS_COMMIT':'"$TRAVIS_COMMIT"'}"
+  - export DEPLOY_CONTENT='{"TRAVIS_BUILD_NUMBER":"'$TRAVIS_BUILD_NUMBER'","TRAVIS_COMMIT":"'$TRAVIS_COMMIT'"}'
   - export DEPLOY_SIG=`echo -n $DEPLOY_CONTENT | openssl sha1 -hmac $DEPLOY_KEY`
-  - export DEPLOY_DATA="{'body':"$DEPLOY_CONTENT"}"
-  - >
-    curl $DEPLOY_URL -d "$DEPLOY_DATA" -H "Content-Type: application/json" -H "X-Trav-Signature: $DEPLOY_SIG"
+  - export DEPLOY_DATA='{"body":"'$DEPLOY_CONTENT'"}'
+  - >-
+    curl -X POST "$DEPLOY_URL" --data "'"$DEPLOY_DATA"'" -H "Content-Type: application/json" -H "X-Trav-Signature: $DEPLOY_SIG"
