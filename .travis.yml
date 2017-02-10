@@ -16,5 +16,5 @@ after_success:
   - export DEPLOY_CONTENT={"TRAVIS_BUILD_NUMBER":"$TRAVIS_BUILD_NUMBER","TRAVIS_COMMIT":"$TRAVIS_COMMIT"}
   - export DEPLOY_SIG=`echo -n $DEPLOY_CONTENT | openssl sha1 -hmac $DEPLOY_KEY`
   - export DEPLOY_DATA={"body":$DEPLOY_CONTENT}
-  - export DEPLOY_HEADERS="X-Trav-Signature: $DEPLOY_SIG"
-  - curl $DEPLOY_URL -d $DEPLOY_DATA -H 'Content-Type: application/json' -H $DEPLOY_HEADERS
+  - export DEPLOY_HEADERS='X-Trav-Signature: '$DEPLOY_SIG
+  - curl $DEPLOY_URL -d $DEPLOY_DATA -H 'Content-Type: application/json' -H "$DEPLOY_HEADERS"
