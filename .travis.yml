@@ -1,3 +1,8 @@
+env:
+  global:
+    - secure: "eQ9WmnNBtzoR/vqyIhl4TsLuhJMEhK1sXhYno3o3FnzMOBb3pWRcIKesmFL3a5qsEQVuS2Xu7L3WB3N4TqW07uOC1t8Z4J24DWSD360vknTyPr9u93c0XEgoHDuMe1ZYL6nU2V8wVnE3fDwT0pFny5ftNd9TYyeaQaMLf+ttPwfiqtUHs10pn38mrdpN3xV4dfurkmwYYdf6Yw5DPYze/Igp8XI014LdjzqMHN0uJbS70OP49kdBfJPfu+cq+lc6bVwk5Wl8eC89bUOYKM4rHg9YgK6ACN/hBE94BGjZyD/MaTDyygpcnwHuaPflejPX6szufv0+OfqjC4Y+uI5hl6fKuQOAf9xxpIIlJpR5hYt9FP+fhXi6IfAuwq6W77bv3EBKRXyqjIio9YETylg+hrrlP84ur4xnvTdNsulnxUHSCsGzl3R08m9Bb5sUcX83VeZ3cte7ddDYabA+UWLsrxv3OeQmZBAS596HTT6U7RLobiZKSlLhAo/NNIqazMXrL49Ams/eP67kY1BNRmI9kvLhD8qJ0dDJk7dR1+M/cWSVwUKi/5I49YjkzoCSQAaA++IZaM7a6QEJxFQS/jHV62s01kXVanlXo31eijTyZM2y/o/6Aoy+F57+lyY8uZzVxTRxSjE5EShDrcx0NfnTHFjtv6qNyb5kU/we6ShZ+T4="
+    - secure: "SzffJO8ql4d0PtjCK2RvUxAbKTKSsS0HurY8JE32lNysgKnw89qwn1K+xpouyOq56YmoNs5io4aG/mq+H3yzp/KiSpdOOaSVWpr0jsJp1PhzoSShYIc4AMhNKkhDY7OyEiICpamU80e2yR9fSAGRks7/QqW7dl2H3bRT6j5ot1wnbmpGcowyIKT9sYqZ93GHvtVSI2kyK1v+uPwmPoinX94qgoqAfjRf5WPqC5kzMjC1d4GKkAanbvfw1fmBWDJYRnsnSHSokChSwrZ6cSADDYZvhtZHWgVO4UGx/A7GN1gA4dvoC4PqXSsL18HbpanEaTnjqW+Z4yG84tVGLT2KX7ij/GhnIryrDQbGG+3mIx1E9UakSasj62MfeEqlfYw9xJrkQcTs73Li1n89Rt747q4BKRZFyizCxcIZYFWZdBLhUrz/V6RtCu+2mFh1LzkBeynzu/gyXN51GDKBUUEPFoen2ENkt736CjN2I+pVE0AgtdJf4zVrk+RoMKUCtsisrNs3gq1xjaTjJzpcRnVFTZ1rQksROTqtHEjNbpx+ZIs+ggkYNc6VhQ/K6R8u7cJTg/uPbPwEUHXddJXPrU4AoC7rJ8W0X/LkIU45Yw2/oZY/U7LwAhcjQ1LtRMe8Lda5YJBjlVDPpgLL0d4BcfMzqe5AApcN3AybEw5W/nEdFv8="
+
 language: python
 python:
   - 2.7
@@ -7,4 +12,7 @@ install:
 script:
   coverage run --source=sketch sketch_tests.py
 after_success:
-  coveralls
+  - coveralls
+  - export DEPLOY_CONTENT={"TRAVIS_BUILD_NUMBER":"$TRAVIS_BUILD_NUMBER","TRAVIS_COMMIT":"$TRAVIS_COMMIT"}
+  - export DEPLOY_SIG=`echo -n $DEPLOY_CONTENT | openssl sha1 -hmac $DEPLOY_KEY`
+  - curl $DEPLOY_URL -d {"body":$DEPLOY_CONTENT} -H 'Content-Type: application/json' -H 'X-Trav-Signature: $DEPLOY_SIG'
